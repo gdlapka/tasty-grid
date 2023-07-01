@@ -6,9 +6,17 @@ import { numberFilter } from '../functions/filters';
 
 const defaultPerPage = 10;
 
+const getLastItem = data => {
+  return data.length === 0 ? 0 : data.length - 1;
+};
+
+const getPageStart = (page, perPage) => {
+  return (page - 1) * perPage;
+};
+
 const getIndexRange = (data, page, perPage) => {
-  const last = data.length === 0 ? 0 : data.length - 1;
-  const start = (page - 1) * perPage;
+  const last = getLastItem(data);
+  const start = getPageStart(page, perPage);
   const end = start + perPage;
   return [start, end > last ? last : end];
 };
@@ -25,6 +33,15 @@ const TestGrid = () => {
       setTestData(data);
     })();
   }, []);
+
+  useEffect(() => {
+    const lastItem = getLastItem(testData);
+    const pageStart = getPageStart(page, perPage);
+
+    if (pageStart > lastItem) {
+      setPage(1);
+    }
+  }, [testData]);
 
   const perPageChanged = e => {
     setPerPageInput(e.target.value);

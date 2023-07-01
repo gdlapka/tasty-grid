@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { ceil } from 'lodash';
+import PaginationCell from './PaginationCell';
 
-const getPages = (currentPage, maxPage, turnPage) => {
+const getPages = (page, setPage, maxPage, delta) => {
+  const intPage = Number(page);
   const pages = [];
+  const start = intPage - delta < 1 ? 1 : intPage - delta ;
+  const finish = intPage + delta > maxPage ? maxPage : intPage + delta;
 
-  for (let i = 1; i <= maxPage; i++) {
-    pages.push(<td
-      className={ i === Number(currentPage) ? 'page-button current-page' : 'page-button'}
-      {...( i === currentPage  ? {} : { onClick: turnPage })}
+  for (let i = start; i <= finish; i++) {
+    pages.push(<PaginationCell
+      {...({ page, setPage })}
       key={ i }
-    >{ i }</td>);
+      pageId={ i }
+    />);
   }
 
   return pages;
@@ -20,25 +24,22 @@ const Pagination = ({
   page,
   setPage,
   perPage,
+  paginationDelta = 4,
 }) => {
   const [maxPage, setMaxPage] = useState(1);
 
   // Расчет диапазона пагинации
   useEffect(() => {
     if (dataCount !== 0) {
-      setMaxPage(ceil(dataCount / perPage));
+      setMaxPage(ceil((dataCount - 1) / perPage));
     }
   }, [dataCount, page, perPage]);
-
-  const turnPage = e => {
-    setPage(e.target.textContent);
-  };
 
   return (
     <table>
       <tbody>
         <tr>
-          { getPages(page, maxPage, turnPage) }
+          { getPages(page, setPage, maxPage, paginationDelta) }
         </tr>
       </tbody>
     </table>
