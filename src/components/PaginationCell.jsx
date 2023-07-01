@@ -5,8 +5,8 @@ const PaginationCell = ({ page, setPage, pageId = 1 } = {}) => {
 
   return (
     <td
-      className={ pageId === Number(page) ? 'page-button current-page' : 'page-button' }
-      {...( pageId === page  ? {} : { onClick: turnPage })}
+      className={ pageId === page ? 'page-button current-page' : 'page-button' }
+      {...( pageId === page ? {} : { onClick: turnPage })}
       key={ pageId }
     >{ pageId }</td>
   );

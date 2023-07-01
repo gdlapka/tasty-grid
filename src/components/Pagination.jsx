@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
-import { ceil } from 'lodash';
+import { floor, ceil } from 'lodash';
 import PaginationCell from './PaginationCell';
 
-const getPages = (page, setPage, maxPage, delta) => {
+const getPages = (page, setPage, maxPage, limit) => {
   const intPage = Number(page);
   const pages = [];
-  const start = intPage - delta < 1 ? 1 : intPage - delta ;
-  const finish = intPage + delta > maxPage ? maxPage : intPage + delta;
+  const delta = floor(( limit - 1 ) / 2);
+  let start = intPage - delta < 1 ? 1 : intPage - delta;
+  const finish = start + limit - 1 > maxPage ? maxPage : start + limit - 1;
+  start = finish - limit + 1 < 1 ? start : finish - limit + 1;
 
   for (let i = start; i <= finish; i++) {
     pages.push(<PaginationCell
-      {...({ page, setPage })}
+      page={ intPage }
+      {...({ setPage })}
       key={ i }
       pageId={ i }
     />);
@@ -24,7 +27,7 @@ const Pagination = ({
   page,
   setPage,
   perPage,
-  paginationDelta = 4,
+  paginationLimit = 9,
 }) => {
   const [maxPage, setMaxPage] = useState(1);
 
@@ -39,7 +42,7 @@ const Pagination = ({
     <table>
       <tbody>
         <tr>
-          { getPages(page, setPage, maxPage, paginationDelta) }
+          { getPages(page, setPage, maxPage, paginationLimit) }
         </tr>
       </tbody>
     </table>
