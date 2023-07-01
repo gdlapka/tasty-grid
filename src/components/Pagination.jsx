@@ -20,9 +20,6 @@ const Pagination = ({
   page,
   setPage,
   perPage,
-  setPerPage,
-  indexRange,
-  setIndexRange
 }) => {
   const [maxPage, setMaxPage] = useState(1);
 
