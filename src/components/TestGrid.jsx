@@ -6,19 +6,20 @@ import { numberFilter } from '../functions/filters';
 
 const defaultPerPage = 10;
 
-const getLastItem = data => {
-  return data.length === 0 ? 0 : data.length - 1;
-};
-
 const getPageStart = (page, perPage) => {
   return (page - 1) * perPage;
 };
 
-const getIndexRange = (data, page, perPage) => {
-  const last = getLastItem(data);
-  const start = getPageStart(page, perPage);
-  const end = start + perPage;
-  return [start, end > last ? last : end];
+const getIndexRange = (data, page, setPage, perPage) => {
+  const last = data.length;
+  let start = getPageStart(page, perPage);
+
+  if (start > last) {
+    start = 0;
+    setPage(1);
+  }
+
+  return [start, start + perPage];
 };
 
 const TestGrid = () => {
@@ -35,7 +36,7 @@ const TestGrid = () => {
   }, []);
 
   useEffect(() => {
-    const lastItem = getLastItem(testData);
+    const lastItem = testData.length;
     const pageStart = getPageStart(page, perPage);
 
     if (pageStart > lastItem) {
@@ -52,7 +53,7 @@ const TestGrid = () => {
     }
   }
 
-  const dataRange = getIndexRange(testData, page, perPage);
+  const dataRange = getIndexRange(testData, page, setPage, perPage);
 
   return (
     <div className="main-container">
@@ -60,18 +61,30 @@ const TestGrid = () => {
         ? <p>Ничего не найдено</p>
         : (
           <>
-            <span>
-              Результатов на странице:
-              <input
-                className="grid-per-page"
-                type="text"
-                size="1"
-                maxLength="3"
-                value={ perPageInput }
-                onBeforeInput={ numberFilter }
-                onChange={ perPageChanged }
-              />
-            </span>
+            <div className="tasty-grid-results-control-panel">
+              <div>
+              <span>
+                Результатов на странице:
+                <input
+                  className="grid-per-page"
+                  type="text"
+                  size="1"
+                  maxLength="3"
+                  value={ perPageInput }
+                  onBeforeInput={ numberFilter }
+                  onChange={ perPageChanged }
+                />
+              </span>
+              </div>
+              <div className="tasty-grid-output-results-info">
+                <i>
+                  Вывод
+                  <b>{ ` ${dataRange[0] + 1}-${dataRange[1]} ` }</b>
+                  из
+                  <b>{ ` ${testData.length}` }</b>
+                </i>
+              </div>
+            </div>
             <table className="grid">
               <tbody>
               { testData.slice(...dataRange).map((line) => {

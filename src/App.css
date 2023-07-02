@@ -32,3 +32,12 @@ td.page-button:not(.current-page):hover {
     font-size: 160%;
     cursor: pointer;
 }
+
+.tasty-grid-output-results-info {
+    font-size: 85%;
+}
+
+.tasty-grid-results-control-panel {
+    display: flex;
+    justify-content: space-between;
+}

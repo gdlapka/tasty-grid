@@ -12,7 +12,7 @@ const getPages = (page, setPage, maxPage, limit) => {
     const delta = floor(( limit - 1 ) / 2);
     start = intPage - delta < 1 ? 1 : intPage - delta;
     finish = start + limit - 1 > maxPage ? maxPage : start + limit - 1;
-    start = finish - limit + 1 < 1 ? start : finish - limit + 1;
+    start = finish - limit + 1 < 1 ? 1 : finish - limit + 1;
   }
 
   for (let i = start; i <= finish; i++) {
@@ -39,7 +39,7 @@ const Pagination = ({
   // Расчет диапазона пагинации
   useEffect(() => {
     if (dataCount !== 0) {
-      setMaxPage(ceil((dataCount - 1) / perPage));
+      setMaxPage(ceil((dataCount) / perPage));
     }
   }, [dataCount, page, perPage]);
 
