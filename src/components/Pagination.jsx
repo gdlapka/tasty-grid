@@ -5,10 +5,15 @@ import PaginationCell from './PaginationCell';
 const getPages = (page, setPage, maxPage, limit) => {
   const intPage = Number(page);
   const pages = [];
-  const delta = floor(( limit - 1 ) / 2);
-  let start = intPage - delta < 1 ? 1 : intPage - delta;
-  const finish = start + limit - 1 > maxPage ? maxPage : start + limit - 1;
-  start = finish - limit + 1 < 1 ? start : finish - limit + 1;
+  let start = 1;
+  let finish = maxPage;
+
+  if (limit) {
+    const delta = floor(( limit - 1 ) / 2);
+    start = intPage - delta < 1 ? 1 : intPage - delta;
+    finish = start + limit - 1 > maxPage ? maxPage : start + limit - 1;
+    start = finish - limit + 1 < 1 ? start : finish - limit + 1;
+  }
 
   for (let i = start; i <= finish; i++) {
     pages.push(<PaginationCell
@@ -27,7 +32,7 @@ const Pagination = ({
   page,
   setPage,
   perPage,
-  paginationLimit = 9,
+  paginationLimit = 20,
 }) => {
   const [maxPage, setMaxPage] = useState(1);
 
