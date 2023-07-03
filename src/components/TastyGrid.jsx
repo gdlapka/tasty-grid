@@ -5,6 +5,7 @@ import { numberFilter } from '../functions/filters';
 import { isEmpty } from 'lodash';
 import GridHeader from './GridHeader';
 import SortFilterPanel from './SortFilterPanel';
+import { compare } from '../functions/sort';
 
 const defaultPerPage = 10;
 
@@ -53,6 +54,7 @@ const TastyGrid = ({ data = [], keyField = 'id', headersConfig = {}} = {}) => {
   const [perPageInput, setPerPageInput] = useState(defaultPerPage);
   const [headers, setHeaders] = useState(headersConfig);
   const [sortFilterParams, setSortFilterParams] = useState(sortFilterConfig);
+  const [sortFilterCounter, setSortFilterCounter] = useState(0);
 
   useEffect(() => {
     if (isEmpty(headers)) {
@@ -65,7 +67,24 @@ const TastyGrid = ({ data = [], keyField = 'id', headersConfig = {}} = {}) => {
     if (pageStart > lastItem) {
       setPage(1);
     }
-  }, [data]);
+  }, [data, sortFilterCounter]);
+
+  useEffect(() => {
+    const { sortConfig } = sortFilterParams;
+    const [field, isAscending] = [sortConfig?.field, sortConfig?.isAscending];
+
+    if (field !== undefined) {
+      data.sort(compare(field))
+
+      if (!isAscending) {
+        data.reverse();
+      }
+    } else {
+      data.sort(compare(keyField));
+    }
+
+    setSortFilterCounter(sortFilterCounter + 1);
+  }, [data, sortFilterParams]);
 
   const perPageChanged = e => {
     setPerPageInput(e.target.value);
