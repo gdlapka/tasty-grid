@@ -1,13 +1,18 @@
-table.grid {
+table.tasty-grid {
     margin: 5px 0 0 0;
 }
 
-table.grid, table.grid th, table.grid td {
+table.tasty-grid, table.tasty-grid th, table.tasty-grid td {
     border: 1px solid black;
     border-collapse: collapse;
 }
 
-table.grid th, table.grid td {
+table.tasty-grid th {
+    background-color: darkgrey;
+    cursor: pointer;
+}
+
+table.tasty-grid th, table.tasty-grid td {
     padding: 4px;
 }
 
@@ -15,7 +20,7 @@ table.grid th, table.grid td {
     margin: 40px;
 }
 
-input.grid-per-page {
+input.tasty-grid-per-page {
     margin: 0 0 0 5px;
 }
 
@@ -23,9 +28,6 @@ input.grid-per-page {
     font-weight: 900;
     font-size: 140%;
     cursor: default;
-}
-
-td.page-button {
 }
 
 td.page-button:not(.current-page):hover {
@@ -40,4 +42,12 @@ td.page-button:not(.current-page):hover {
 .tasty-grid-results-control-panel {
     display: flex;
     justify-content: space-between;
+}
+
+.tasty-grid-delete-item-button {
+    cursor: pointer;
+}
+
+.tasty-grid-sort-filter-panel {
+    font-size: 95%;
 }

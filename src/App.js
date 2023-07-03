@@ -1,11 +1,9 @@
 import './App.css';
-import TestGrid from './components/TestGrid';
+import GridPage from './pages/GridPage';
 
 function App() {
   return (
-    <>
-      <TestGrid/>
-    </>
+    <GridPage/>
   );
 }
 

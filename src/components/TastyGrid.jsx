@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import GridLine from './GridLine';
 import Pagination from './Pagination';
 import { numberFilter } from '../functions/filters';
+import { isEmpty } from 'lodash';
+import GridHeader from './GridHeader';
+import SortFilterPanel from './SortFilterPanel';
 
 const defaultPerPage = 10;
 
@@ -19,30 +21,51 @@ const getIndexRange = (data, page, setPage, perPage) => {
     setPage(1);
   }
 
-  return [start, start + perPage];
+  return [start, start + perPage > last ? last : start + perPage];
 };
 
-const TestGrid = () => {
-  const [testData, setTestData] = useState([]);
+const getHeaders = data => {
+  if (isEmpty(data)) {
+    return {};
+  }
+
+  const headers = Object.keys(data[0]);
+  const result = { ...data[0] };
+
+  headers.forEach(header => {
+    result[header] = header;
+  });
+
+  return result;
+};
+
+const sortFilterConfig = {
+  sortConfig: {
+    field: undefined,
+    isAscending: true,
+  },
+  filters: [],
+};
+
+const TastyGrid = ({ data = [], keyField = 'id', headersConfig = {}} = {}) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(defaultPerPage);
   const [perPageInput, setPerPageInput] = useState(defaultPerPage);
+  const [headers, setHeaders] = useState(headersConfig);
+  const [sortFilterParams, setSortFilterParams] = useState(sortFilterConfig);
 
   useEffect(() => {
-    (async () => {
-      const { data } = await axios('https://jsonplaceholder.typicode.com/comments');
-      setTestData(data);
-    })();
-  }, []);
+    if (isEmpty(headers)) {
+      setHeaders(getHeaders(data));
+    }
 
-  useEffect(() => {
-    const lastItem = testData.length;
+    const lastItem = data.length;
     const pageStart = getPageStart(page, perPage);
 
     if (pageStart > lastItem) {
       setPage(1);
     }
-  }, [testData]);
+  }, [data]);
 
   const perPageChanged = e => {
     setPerPageInput(e.target.value);
@@ -53,7 +76,7 @@ const TestGrid = () => {
     }
   }
 
-  const dataRange = getIndexRange(testData, page, setPage, perPage);
+  const dataRange = getIndexRange(data, page, setPage, perPage);
 
   return (
     <div className="main-container">
@@ -66,7 +89,7 @@ const TestGrid = () => {
               <span>
                 Результатов на странице:
                 <input
-                  className="grid-per-page"
+                  className="tasty-grid-per-page"
                   type="text"
                   size="1"
                   maxLength="3"
@@ -81,22 +104,22 @@ const TestGrid = () => {
                   Вывод
                   <b>{ ` ${dataRange[0] + 1}-${dataRange[1]} ` }</b>
                   из
-                  <b>{ ` ${testData.length}` }</b>
+                  <b>{ ` ${data.length}` }</b>
                 </i>
               </div>
             </div>
-            <table className="grid">
+            <SortFilterPanel { ...{ sortFilterParams, setSortFilterParams, headersConfig }} />
+            <table className="tasty-grid">
               <tbody>
-              { testData.slice(...dataRange).map((line) => {
-                return (
-                  <GridLine key={ line.id } lineData={ line }/>
-                );
-              }) }
+                <GridHeader {...{ headers, sortFilterParams, setSortFilterParams }}/>
+                { data.slice(...dataRange).map(
+                  line => (<GridLine key={ line[keyField] } lineData={ line } { ...{ headers } } />)
+                ) }
               </tbody>
             </table>
             <Pagination
-              dataCount={ testData.length }
-              {...({ page, setPage, perPage })}
+              dataCount={ data.length }
+              {...{ page, setPage, perPage }}
             />
           </>
         )
@@ -105,4 +128,4 @@ const TestGrid = () => {
   );
 };
 
-export default TestGrid;
+export default TastyGrid;
